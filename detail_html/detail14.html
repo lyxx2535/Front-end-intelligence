@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>图片14</title>
+    <link rel="stylesheet" href="../static/css/index.css">
+    <link rel="stylesheet" href="../static/css/bootstrap.min.css">
+    <script src="../static/js/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+</head>
+
+<body>
+    <header class="head-sec">
+        <div class="container">
+            <div class="top-navigation">
+                <nav class="navbar navbar-expand-lg nav-up">
+                    <a class="navbar-brand">2022Web前端作业五</a>
+                    <a id="username">请先登录</a>
+                    <div class="navbar-collapse" id="navbarNav">
+                        <ul class="navbar-nav horizontal-nav ml-auto">
+                            <li>
+                                <a class="nav-link" href="../index.html">主页</a>
+                            </li>
+                            <li>
+                                <a class="nav-link" href="../login.html">登录</a>
+                            </li>
+                            <li>
+                                <a class="nav-link" href="../register.html">注册</a>
+                            </li>
+                            <li>
+                                <a class="nav-link" href="../watermark.html">水印</a>
+                            </li>
+                        </ul>
+                    </div>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <div class="wrapper">
+        <div class="picture">
+            <img src="../static/pics/pic14.jpg" alt="">
+        </div>
+
+
+        <div class="footer">
+            ©201250215 刘玥骁
+        </div>
+    </div>
+</body>
+<script>
+    window.onload = function () {
+        url = `http://localhost:3001/get_session`
+        $.ajax({
+            method: "get", url: url, async: false, xhrFields: { withCredentials: true }, success: function (data) {
+                console.log(data)
+                if (data.success) {
+                    console.log(data.data.res)
+                    document.getElementById("username").innerHTML = data.data.res + "：欢迎！"
+                } else {
+                    alert("请先登录")
+                    window.location.href = "login.html";
+                }
+            },
+            error: function (err) {
+                console.log(err)
+            }
+        })
+    }
+</script>
+
+</html>

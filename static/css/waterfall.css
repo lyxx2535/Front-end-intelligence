@@ -1,0 +1,51 @@
+/********************************/
+/*********** waterfall *********/
+/********************************/
+.waterfall {
+    /* column-count 实现自动排版 */
+    -moz-column-count: 3;
+    /* Firefox */
+    -webkit-column-count: 3;
+    /* Safari 和 Chrome */
+    column-count: 3;
+
+    /* 列间距 */
+    -moz-column-gap: 1em;
+    -webkit-column-gap: 1em;
+    column-gap: 1em;
+}
+
+.item {
+    margin: 0 0 1em 0;
+    -moz-page-break-inside: avoid;
+    -webkit-column-break-inside: avoid;
+    break-inside: avoid;
+    border: none;
+}
+
+.item .watermark {
+    --watermark: url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8dGV4dCB4PSI1MCUiIHk9IjUwJSIgZm9udC1zaXplPSIzMCIgZmlsbD0iIzQ3NDk0ZCIgZmlsbC1vcGFjaXR5PSIxLjAiIGZvbnQtZmFtaWx5PSJzeXN0ZW0tdWksIHNhbnMtc2VyaWYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGRvbWluYW50LWJhc2VsaW5lPSJtaWRkbGUiIHRyYW5zZm9ybT0ncm90YXRlKC00NSwgMTAwIDEwMCknPuWImOeOpemqgTIwMTI1MDIxNTwvdGV4dD4KPC9zdmc+");
+    background-image: var(--watermark);
+    position: relative;
+    z-index: 100;
+}
+
+.item img {
+    border-radius: 32px;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.item img:hover {
+    opacity: 0.7;
+}
+
+.img_hirizontal {
+    height: 300px;
+    width: auto;
+}
+
+.img_vertical {
+    height: 450px;
+    width: auto;
+}

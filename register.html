@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>注册</title>
+    <link rel="stylesheet" href="static/css/index.css">
+    <link rel="stylesheet" href="static/css/bootstrap.min.css">
+    <script src="static/js/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="https://unpkg.com/md5js@1.0.7/dist/md5.js"></script>
+</head>
+
+<body>
+    <header class="head-sec">
+        <div class="container">
+            <div class="top-navigation">
+                <nav class="navbar navbar-expand-lg nav-up">
+                    <a class="navbar-brand">2022Web前端作业五</a>
+
+                    <div class="navbar-collapse" id="navbarNav">
+                        <ul class="navbar-nav horizontal-nav ml-auto">
+                            <li>
+                                <a class="nav-link" href="index.html">主页</a>
+                            </li>
+                            <li>
+                                <a class="nav-link" href="login.html">登录</a>
+                            </li>
+                            <li>
+                                <a class="nav-link" href="register.html">注册</a>
+                            </li>
+                            <li>
+                                <a class="nav-link" href="watermark.html">水印</a>
+                            </li>
+                        </ul>
+                    </div>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <div class="wrapper">
+        <div class="content">
+            <form action="login.html" onsubmit="return send_register()">
+                <div>用户名：</div>
+                <input type="text" name="username" id="register-username" placeholder="3-12字符，中文/大小写英文/数字均可"><br>
+                <div>密码：</div>
+                <input type="password" name="password" id="register-password" placeholder="8字符以上，字母/数字/特殊字符至少各1个"><br>
+                <div class="strong">
+                    <p class="fl">
+                        <span class="hover">弱</span>
+                        <span class="">中</span>
+                        <span class="">强</span>
+                    </p>
+                </div>
+                <div>确认密码：</div>
+                <input type="password" name="repassword" id="register-repassword" placeholder="当且仅当上一行密码符合规则时可输入"
+                    disabled=""><br>
+                <div>邮箱：</div>
+                <input type="email" name="email" id="register-email" placeholder="英文、数字、下划线等，域名为com或cn"><br>
+                <!-- <input type="text" name="captcha" id="register-captcha" placeholder="邮箱验证码">
+                <input type="button" onclick="send_captcha()" value="发送邮箱验证码"><br> -->
+                <input class="submit" type="submit" value="注册">
+            </form>
+        </div>
+        <div class="footer">
+            ©201250215 刘玥骁
+        </div>
+    </div>
+</body>
+<script>
+    function cal_psd_score(string) {
+        var total_len = string.length
+        var lower_char_num = string.match(/[a-z]/g) == null ? 0 : string.match(/[a-z]/g).length
+        var upper_char_num = string.match(/[A-Z]/g) == null ? 0 : string.match(/[A-Z]/g).length
+        var digit_num = string.match(/[0-9]/g) == null ? 0 : string.match(/[0-9]/g).length
+        var left_len = total_len - lower_char_num - upper_char_num - digit_num
+
+        var score = 0
+        if (total_len > 8) {
+            score += 10
+        }
+        if (lower_char_num != 0 && upper_char_num != 0) {
+            score += 20
+        } else if (lower_char_num != 0 || upper_char_num == 0) {
+            score += 10
+        }
+        if (digit_num >= 1) {
+            score += 10
+        } else if (digit_num >= 3) {
+            score += 20
+        }
+        if (left_len == 1) {
+            score += 10
+        } else if (left_len > 1) {
+            score += 20
+        }
+        return score
+    }
+    window.onload = function () {
+        var psd = document.getElementById("register-password");
+        var repsd = document.getElementById("register-repassword");
+        var fl = document.getElementsByClassName("fl")[0];
+
+        let right_psd = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{8,}$/
+        //实时监控密码强度和正确性
+        psd.onkeyup = function () {
+            if (right_psd.test(this.value)) {
+                repsd.removeAttribute("disabled");
+            } else {
+                repsd.setAttribute("disabled", "disabled");
+            }
+            var score = cal_psd_score(this.value)
+            if (score <= 25) {
+                fl.className = "";
+            } else if (score <= 50) {
+                fl.className = "active";
+
+            } else {
+                fl.className = "active1";
+            }
+        }
+    }
+    function get_encrypt_password(data) {
+        return md5.md5(data, 32);
+    }
+    function send_register() {
+        var username = document.getElementById("register-username").value;//获取输入的账户名
+        var password = document.getElementById("register-password").value;//获取输入的密码
+        var repassword = document.getElementById("register-repassword").value;//确认输入的密码
+        var email = document.getElementById("register-email").value;//获取输入框的邮箱
+
+        if (!username) {
+            alert('请输入用户名！');
+            return false;
+        } else if (!password) {
+            alert('请输入密码！');
+            return false;
+        } else if (!repassword) {
+            alert('请输入确认密码！');
+            return false;
+        } else if (password != repassword) {
+            alert('两次输入的密码不一致！');
+            return false;
+        } else if (!email) {
+            alert('请输入邮箱！');
+            return false;
+        }
+
+        var exit_flag = false;//.ajax默认为异步，异步不可以直接return返回结果
+        let url = `http://localhost:3001/check_username?username=${username}`
+        $.ajax({
+            method: "post", url: url, async: false,
+            xhrFields: { withCredentials: true }, success: function (data) {
+                if (!data.success) {
+                    alert('用户名已存在，请更换！');
+                    exit_flag = true;
+                }
+            },
+            error: function (err) {
+                console.log(err)
+            }
+        })
+        if (exit_flag) return false;
+
+        let right_name = /^[\u4e00-\u9fa5a-zA-Z0-9]{3,12}$/
+        if (!right_name.test(username)) {
+            alert("用户名格式错误，请修改！");
+            return false;
+        }
+
+        let right_email = /^([a-zA-Z0-9]+[_|\_|\.]?)*[a-zA-Z0-9]+@([a-zA-Z0-9]+[_|\_|\.]?)*[a-zA-Z0-9]+\.[a-zA-Z]{2,3}$/
+        if (!right_email.test(email)) {
+            alert("邮箱格式错误，请修改！");
+            return false;
+        }
+
+        url = `http://localhost:3001/check_email?email=${email}`
+        $.ajax({
+            method: "post", url: url, async: false, xhrFields: { withCredentials: true }, success: function (data) {
+                if (!data.success) {
+                    alert('邮箱已注册过，请更换！');
+                    exit_flag = true;
+                }
+            },
+            error: function (err) {
+                console.log(err)
+            }
+        })
+        if (exit_flag) return false;
+
+        var encrypt_password = get_encrypt_password(password);
+        console.log(encrypt_password);
+
+        url = `http://localhost:3001/register?encryptPassword=${encrypt_password}&username=${username}&email=${email}`
+        $.ajax({
+            method: "post", url: url, async: false, xhrFields: { withCredentials: true }, success: function (data) {
+                if (data.success) {
+                    alert('注册成功，跳转至登录页面！');
+                    exit_flag = true
+                }
+            },
+            error: function (err) {
+                console.log(err)
+            }
+        })
+        if (exit_flag) return true;
+        else return false;
+
+        //TODO:邮箱验证的功能待前端智能时实现
+        // function send_captcha() {
+        //     var time = 60;//定义60秒的倒计时
+        //     var email = $('#email').val();//获取输入框的邮箱
+        //     var user_name = $('#form-username').val();//获取输入的账户名
+
+        //     //这里我用的是ajax将用户名和邮箱发到后台
+        //     $.get('/api/email',
+        //         {
+        //             email: email,
+        //             user_name: user_name
+        //         },
+        //         function (data) {
+        //             console.log(data)
+
+        //         }
+        //     )
+
+        //     //设置一个定时，一秒执行一次
+        //     var mytime = setInterval(function () {
+        //         subs();
+        //     }, 1000)
+
+
+        //     function subs() {
+        //         time--;
+        //         $('#emialcore').attr("value", "请" + time + "秒后再试");
+        //         if (time === 0) {
+        //             clearInterval(mytime);
+        //             $('#emialcore').attr("value", "发送验证码");
+        //             $('#emialcore').attr("disabled", false);//按键可用
+        //         } else {
+        //             $('#emialcore').attr("disabled", true);//按键不可用
+        //         }
+        //     }
+        // }
+    }
+</script>
+
+</html>

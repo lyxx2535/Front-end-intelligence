@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登录</title>
+    <link rel="stylesheet" href="static/css/index.css">
+    <link rel="stylesheet" href="static/css/bootstrap.min.css">
+    <script src="static/js/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="https://unpkg.com/md5js@1.0.7/dist/md5.js"></script>
+</head>
+
+<body>
+    <header class="head-sec">
+        <div class="container">
+            <div class="top-navigation">
+                <nav class="navbar navbar-expand-lg nav-up">
+                    <a class="navbar-brand">2022Web前端作业五</a>
+
+                    <div class="navbar-collapse" id="navbarNav">
+                        <ul class="navbar-nav horizontal-nav ml-auto">
+                            <li>
+                                <a class="nav-link" href="index.html">主页</a>
+                            </li>
+                            <li>
+                                <a class="nav-link" href="login.html">登录</a>
+                            </li>
+                            <li>
+                                <a class="nav-link" href="register.html">注册</a>
+                            </li>
+                            <li>
+                                <a class="nav-link" href="watermark.html">水印</a>
+                            </li>
+                        </ul>
+                    </div>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <div class="wrapper">
+        <div class="content">
+            <form action="index.html" onsubmit="return send_login()">
+                <input type="text" name="username" id="login-username" placeholder="用户名或邮箱"><br>
+                <input type="password" name="password" id="login-password" placeholder="密码"><br>
+                <input type="text" name="captcha" id="login-captcha" placeholder="验证码（不区分大小写）"><br>
+                <div id="img" onclick="refresh_captcha()" style="margin-left: 36%;margin-bottom: 8%;"></div>
+                <input class="submit" type="submit" value="登录">
+            </form>
+            <!-- <a href="#">找回密码</a> -->
+            <a href="register.html">立即注册</a>
+        </div>
+        <div class="footer">
+            ©201250215 刘玥骁
+        </div>
+    </div>
+</body>
+<script>
+    var curr_captcha;
+    function refresh_captcha() {
+        let url = `http://localhost:3001/get_captcha?t="+${new Date().getTime()}`
+        $.ajax({
+            method: "post", url: url, async: false, xhrFields: { withCredentials: true }, success: function (data) {
+                if (data.success) {
+                    document.getElementById("img").innerHTML = data.data.src
+                    curr_captcha = data.data.ans
+                }
+            },
+            error: function (err) {
+                console.log(err)
+            }
+        })
+    }
+    window.onload = function () {
+        refresh_captcha()
+    }
+
+    function get_encrypt_password(data) {
+        return md5.md5(data, 32);
+    }
+    function send_login() {
+        var username = document.getElementById("login-username").value;//获取输入的账户名
+        var password = document.getElementById("login-password").value;//获取输入的密码
+        var captcha = document.getElementById("login-captcha").value;//获取输入的密码
+
+        if (!username) {
+            alert('请输入用户名或邮箱！');
+            return false;
+        } else if (!password) {
+            alert('请输入密码！');
+            return false;
+        } else if (!captcha) {
+            alert('请输入验证码！');
+            return false;
+        }
+
+        var encrypt_password = get_encrypt_password(password);
+        // console.log(encrypt_password);
+
+        // console.log(curr_captcha)
+        var exit_flag = false;//.ajax默认为异步，异步不可以直接return返回结果
+        url = `http://localhost:3001/login?captcha=${captcha}&username=${username}&password=${encrypt_password}&ans=${curr_captcha}`
+        $.ajax({
+            method: "post", url: url, async: false, xhrFields: { withCredentials: true }, success: function (data) {
+                if (data.success) {
+                    alert('用户' + username + "登录成功！");
+                    exit_flag = true
+                } else {
+                    alert(data.message)
+                }
+            },
+            error: function (err) {
+                console.log(err)
+            }
+        })
+
+        if (exit_flag) return true;
+        else return false;
+    }
+</script>
+
+</html>

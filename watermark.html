@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>水印</title>
+    <link rel="stylesheet" href="static/css/index.css">
+    <link rel="stylesheet" href="static/css/bootstrap.min.css">
+    <style>
+        div {
+            height: 100%;
+            width: 100%;
+        }
+
+        .pic img {
+            border-radius: 32px;
+            /*max-width: 1072px;*/
+            max-width: 940px;
+            width: auto;
+            height: auto;
+        }
+    </style>
+</head>
+
+<body>
+    <header class="head-sec">
+        <div class="container">
+            <div class="top-navigation">
+                <nav class="navbar navbar-expand-lg nav-up">
+                    <a class="navbar-brand">2022Web前端作业三</a>
+
+                    <div class="navbar-collapse" id="navbarNav">
+                        <ul class="navbar-nav horizontal-nav ml-auto">
+                            <li>
+                                <a class="nav-link" href="index.html">主页</a>
+                            </li>
+                            <li>
+                                <a class="nav-link" href="login.html">登录</a>
+                            </li>
+                            <li>
+                                <a class="nav-link" href="register.html">注册</a>
+                            </li>
+                            <li>
+                                <a class="nav-link" href="watermark.html">水印</a>
+                            </li>
+                        </ul>
+                    </div>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+
+    <div class="wrapper">
+        <div class="content">
+            <a class="navbar-brand">1. 动态水印生成</a>
+            <h5 style="color:rgb(255, 140, 0)">1.1 效果展示</h5>
+            若水印未覆盖全图，只在图片最上方有一点，是因为浏览器缓存影响了div元素高度的实时获取，建议使用VSCode的Live Server运行。
+            <div class="picture">
+                <img src="static/pics/pic4.jpg">
+            </div>
+            <div class="picture">
+                <img src="static/pics/pic17.jpg">
+            </div>
+
+            <a class="navbar-brand">2. 频域水印生成</a>
+            <h5 style="color:rgb(255, 140, 0)">2.1 效果展示</h5>
+            原始图像：
+            <div class="pic">
+                <img src="static/pics/pic6.jpg">
+            </div>
+
+            水印“刘玥骁201250215”，级别2，密码654321生成的图像，您可以下载到本地测试下文的解码功能：
+            <div class="pic">
+                <img src="static/pics/blind_pic6.png">
+            </div>
+            <h5 style="color:rgb(255, 140, 0)">2.2 在线操作</h5>
+            <h5>第一步：上传待操作的图像（大于64*64）</h5>
+            <input type="file" id="blind" accept="image/*" />
+            <h5>第二步：选择隐写术级别</h5>
+            <div>
+                <p>如果您不需要图像压缩鲁棒性，请使用级别0，否则建议使用级别2和3</p>
+                <p><label for="m0"><input type="radio" name="mode" id="m0" value=0 checked="checked" /> 0 -
+                        LSB模式（默认），最佳保密性，无压缩鲁棒性</label></p>
+                <p><label for="m1"><input type="radio" name="mode" id="m1" value=1 /> 1 - DCT模式</label></p>
+                <p><label for="m2"><input type="radio" name="mode" id="m2" value=2 /> 2 - DCT模式</label></p>
+                <p><label for="m3"><input type="radio" name="mode" id="m3" value=3 /> 3 - DCT模式</label></p>
+                <p><label for="m4"><input type="radio" name="mode" id="m4" value=4 /> 4 - DCT模式</label></p>
+                <p><label for="m5"><input type="radio" name="mode" id="m5" value=5 /> 5 -
+                        DCT模式，最佳压缩鲁棒性，最差保密性</label>
+                </p>
+            </div>
+            <h5>第三步：设置解码密码（可选）</h5>
+            <input type="text" id="pass" value="" placeholder="不设置密码" />
+            <p style="color:red">注意：如果想正确解码图片，选择的级别、输入的密码需要与生成图片时一致！</p>
+
+            <h5>第四步：设置写入图片的密文</h5>
+        </div>
+        <textarea id="msg"></textarea>
+        <div class="content">
+            <h5>第五步：选择操作</h5>
+
+            <a href="javascript: writeIMG()"><input class="submit" type="submit" value="将密文写入图片"></a>
+            <a href="javascript: readIMG()"><input class="submit" type="submit" value="从图片中读取密文"></a>
+            <h5>结果</h5>
+            <div id="result" style="background-color: rgba(248, 204, 5, 0.3); padding: 10px 10px 10px 10px;">
+                请完成1-5步，结果会显示在这里！
+            </div>
+            <img id="blindres" style="display:none" src="" />
+
+            <div class=" footer">
+                ©201250215 刘玥骁
+            </div>
+        </div>
+    </div>
+
+    <script src="static/js/watermark.js"></script>
+    <script type="text/javascript" src="static/js/cryptostego.min.js"></script>
+    <script type="text/javascript" src="static/js/jquery.min.js"></script>
+    <!--jQuery is not required by the library. We use it in DEMO page-->
+</body>
+
+</html>
